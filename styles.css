@@ -1,0 +1,168 @@
+#map { position: absolute; width: 100%; height: 100vh}
+
+#getBtn {
+     position: relative;
+     padding: 10px;
+     z-index: 400;
+}
+
+#mapWrapper {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    border: 1px solid black;
+    }
+
+   #html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+       /*this is what I've added*/
+#bus
+{
+    position: relative;
+    width: 150px;
+    padding-right: 10px;
+    font-size: 30;
+    z-index: 400;
+    outline: none;
+    opacity: 1.0;
+}
+/*this is what I've added*/ 
+.button {
+    display: flex;
+    top: 10px;
+    height:40px;
+    width: 100px;
+    background: #00a16bda;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    overflow: hidden;
+    font-family: "Quicksand", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background: #00c080;
+  }
+  
+  .button:active {
+    background: #00c482;
+  }
+  
+  .button__text{
+    display: inline-flex;
+    align-items: center;
+    padding: 0 24px;
+    color: #fff;
+    height: 100%;
+  }
+  
+  .button__icon {
+    font-size: 1.5em;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  #src
+  {
+    position: absolute;
+    top: 86px;
+    left: 20px;
+    font-size: 30;
+    z-index: 400;
+    width: 400;
+    outline: none;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: #00a16bda;
+    border-color: #00ffaada;
+  }
+
+
+/*************************/
+/*  CSS for navigation  */
+/***********************/
+body {
+    font-family: "Lato", sans-serif;
+  }
+  
+  /* Fixed sidenav, full height */
+  .sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+  
+  /* Style the sidenav links and the dropdown button */
+  .sidenav a, .dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #ffffff;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  /* Main content */
+  .main {
+    margin-left: 200px; /* Same as the width of the sidenav */
+    font-size: 20px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+  }
+  
+  /* Add an active class to the active dropdown button */
+  .active {
+    background-color: green;
+    color: white;
+  }
+  
+  /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+  .dropdown-container {
+    display: none;
+    height: 180px;
+    background-color: #262626;
+    padding-left: 8px;
+  }
+  
+  /* Optional: Style the caret down icon */
+  .fa-caret-down {
+    float: right;
+    padding-right: 8px;
+  }
+  
+  /* Some media queries for responsiveness */
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  /* lpp btn*/
+  #btnLPP
+  {
+      font-size: 40px;
+  }
+  #btnBicikeLJ
+  {
+      font-size: 40px;
+  }
+  #text
+  {
+      position: relative;
+      font-size: 20px;
+      left: -15px;
+  }
