@@ -55,7 +55,7 @@ function busRTExample()
 
 const getBtn = document.getElementById('getBtn');
 
-let schedule="";
+let schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
 var bus;
 function cur_bus()
 {
@@ -67,8 +67,8 @@ const getData = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?page_size=1
 .then(response => response.json())
 .then(data =>
     {
-        layerGroupBikes.clearLayers();
         layerGroup.clearLayers();
+        layerGroupBikes.clearLayers();
         for (result in data.results)
         { 
             //var marker = new L.marker([data.results[result].lat,data.results[result].lng]).addTo(map)
@@ -163,12 +163,13 @@ const getSchedule = () => fetch("https://api.ontime.si/api/v1/lpp/stops/"+statio
         } )
     .catch(e => console.log(e))
 
+
 const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/")
 .then(response => response.json())
 .then(data =>
     {
-        layerGroupBikes.clearLayers();
         layerGroup.clearLayers();
+        layerGroupBikes.clearLayers();
         for(bikeLoc in data.results)
         {
             
@@ -199,14 +200,17 @@ getBtn.addEventListener('click', getShape1);
 getBtn.addEventListener('click', getShape2);
 getBtnBicikelj.addEventListener('click', getBikes);
 
-function markerOnClick(e)
+async function markerOnClick(e)
 {
-	stationID=e.target._tooltip._content.split("_")[0];
+    stationID=e.target._tooltip._content.split("_")[0];
     getSchedule();
+    console.log();
+    if(schedule == "<b>PRIHODI AVTOBUSOV</b><br><br>")
+    {
+        await sleep(100);
+        getSchedule();
+    }
     e.target.bindPopup(schedule);
+    schedule = "<b>PRIHODI AVTOBUSOV</b><br><br>"
     //console.log(stationID);
 }
-
-
-
-///https://api.ontime.si/api/v1/lpp/stops/?page_size=1367
