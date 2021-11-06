@@ -35,7 +35,7 @@
     top: 10px;
     height:40px;
     width: 100px;
-    background: #00a16bda;
+    background: green;
     border: none;
     outline: none;
     border-radius: 5px;
@@ -47,11 +47,11 @@
   }
   
   .button:hover {
-    background: #00c080;
+    background: rgb(0, 182, 0);
   }
   
   .button:active {
-    background: #00c482;
+    background: rgb(0, 200, 0);
   }
   
   .button__text{
@@ -79,7 +79,7 @@
     font-family: sans-serif;
     font-weight: 800;
     font-size: 20px;
-    color: #00a16bda;
+    color: 'green';
     border-color: #00ffaada;
   }
 
@@ -117,6 +117,7 @@ body {
     text-align: left;
     cursor: pointer;
     outline: none;
+    align-items: center;
   }
   
   /* Main content */
@@ -130,6 +131,10 @@ body {
   .active {
     background-color: green;
     color: white;
+  }
+  .hover 
+  {
+    background-color: rgb(0, 202, 0);
   }
   
   /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */

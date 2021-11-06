@@ -1,10 +1,9 @@
-const getBtn = document.getElementById('getBtn');
-const getBtnBicikeLJ = document.getElementById('btnBicikeLJ');
 let busEx;
+const getBtnBicikelj = document.getElementById('btnBicikeLJ');
 // trenutno se neuporabno
 //busRTExample()
 
-let busInfo = new L.circle([46.052129458185, 14.472137335197804], {radius: 20, color: "black", fillOpacity: 0.8}).addTo(map);
+let busInfo = new L.circle([46.051318465073795, 14.479674887201202], {radius: 20, color: "black", fillOpacity: 0.8}).addTo(map);
 // TODO: implement avtobus info
 busInfo.bindPopup("<b>registracija:</b> LJ-LPP-439" +
                "<br><b>pot:</b> KOLODVOR" + 
@@ -28,7 +27,7 @@ function busRTExample()
 {
     busEx = new L.circle([46.052129458185, 14.472137335197804], {radius: 20}).addTo(map);
     
-    fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?groups="+bus)
+    fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?groups=18")
         .then(response => response.json())
         .then(data =>
             {
@@ -51,12 +50,12 @@ function busRTExample()
                         //console.log(bus);
                 }
             } )
-        .catch(err => console.log('error'))
+        .catch(e => console.log(e))
 }
 
+const getBtn = document.getElementById('getBtn');
 
-
-
+let schedule="";
 var bus;
 function cur_bus()
 {
@@ -68,8 +67,8 @@ const getData = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?page_size=1
 .then(response => response.json())
 .then(data =>
     {
-        layerGroup.clearLayers();
         layerGroupBikes.clearLayers();
+        layerGroup.clearLayers();
         for (result in data.results)
         { 
             //var marker = new L.marker([data.results[result].lat,data.results[result].lng]).addTo(map)
@@ -153,8 +152,14 @@ const getSchedule = () => fetch("https://api.ontime.si/api/v1/lpp/stops/"+statio
                     allArrivalTimes.push(arrivalTimes);
                 };
             }
-            console.log(routes);
-            console.log(allArrivalTimes);
+            schedule = "<b>PRIHODI AVTOBUSOV</b><br><br>";
+            for(index in routes){
+                schedule+="<b>SMER - "+routes[index]+"</b><br>";
+                for(i in allArrivalTimes[index]){
+                    schedule+=allArrivalTimes[index][i]+"<br>";
+                }
+                schedule+="<br>";
+            }
         } )
     .catch(e => console.log(e))
 
@@ -162,27 +167,27 @@ const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/")
 .then(response => response.json())
 .then(data =>
     {
-        layerGroup.clearLayers();
         layerGroupBikes.clearLayers();
+        layerGroup.clearLayers();
         for(bikeLoc in data.results)
         {
             
             //console.log(data.results[bikeLoc].total_stands * 0.8)
-            if(data.results[bikeLoc].total_stands * 0.8 < data.results[bikeLoc].available_bikes)
+            if(data.results[bikeLoc].total_stands * 0.8 <= data.results[bikeLoc].available_bikes)
             {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 70,color: 'green'}).bindPopup(
-                    "imgay: "+ data.results[bikeLoc].available_bikes).addTo(layerGroupBikes)
+                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'green'}).bindPopup(
+                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
             }
-            else if(data.results[bikeLoc].available_bikes < data.results[bikeLoc].total_stands * 0.2)
+            else if(data.results[bikeLoc].available_bikes <= data.results[bikeLoc].total_stands * 0.2)
             {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 70,color: 'red'}).bindPopup(
-                    "imgay: "+ data.results[bikeLoc].available_bikes).addTo(layerGroupBikes)
+                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'red'}).bindPopup(
+                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
             }
             else
             {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 70,color: 'orange'})
+                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'orange'})
                 .bindPopup(
-                    "imgay: "+ data.results[bikeLoc].available_bikes).addTo(layerGroupBikes)
+                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
             }
         }
     }
@@ -192,13 +197,14 @@ getBtn.addEventListener('click', cur_bus);
 getBtn.addEventListener('click', getData);
 getBtn.addEventListener('click', getShape1);
 getBtn.addEventListener('click', getShape2);
-getBtnBicikeLJ.addEventListener('click', getBikes);
+getBtnBicikelj.addEventListener('click', getBikes);
 
 function markerOnClick(e)
 {
 	stationID=e.target._tooltip._content.split("_")[0];
     getSchedule();
-    console.log(stationID);
+    e.target.bindPopup(schedule);
+    //console.log(stationID);
 }
 
 
