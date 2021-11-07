@@ -48,6 +48,7 @@ function busRTExample()
 
 const getBtn = document.getElementById('getBtn');
 const getBtnAdd = document.getElementById('getBtnAdd');
+const getBtnSosed = document.getElementById('getBtnSosed');
 
 let dataMissing=true;
 let schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
@@ -111,7 +112,7 @@ const getShape1 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
         { 
             latlngs.push([data.results[0].trips[0].shape[i].lat, data.results[0].trips[0].shape[i].lng]);
         }
-        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 1,weight: 10, smoothFactor: 1}).addTo(layerGroup);
+        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6,weight: 10, smoothFactor: 1}).addTo(layerGroup);
         map.fitBounds(polyline.getBounds());
     } )
 .catch(e => console.log(e))
@@ -126,7 +127,7 @@ const getShape2 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
         { 
             latlngs.push([data.results[0].trips[1].shape[i].lat, data.results[0].trips[1].shape[i].lng]);
         }
-        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 1, weight: 10, smoothFactor: 1}).addTo(layerGroup);
+        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6, weight: 10, smoothFactor: 1}).addTo(layerGroup);
         map.fitBounds(polyline.getBounds());
     } )
 .catch(e => console.log(e))
@@ -220,7 +221,30 @@ function setBusData()
     }
 }
 
+let lat_max;
+let lat_min;
+let lng_max;
+let lng_min;
+navigator.geolocation.getCurrentPosition(success,console.log)
+function success(pos)
+{
+    lat_max = pos.coords.latitude + 0.006
+    lat_min = pos.coords.latitude - 0.006
+    lng_max = pos.coords.longitude + 0.006
+    lng_min = pos.coords.longitude - 0.006
+    let m = new L.marker([pos.coords.latitude,pos.coords.longitude],{color: 'red'}).bindPopup("Tvoja Lokacija").openPopup()
+    m.addTo(map);
+}
 
+const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min="+lat_min+"&lat_max="+lat_max+"&lng_min="+lng_min+"&lng_max="+lng_max)
+.then(response => response.json())
+.then(data =>
+    {   
+        for(postaja in data.results)
+        {
+            L.marker([data.results[postaja].lat,data.results[postaja].lng]).addTo(layerGroup);
+    }
+    })
 
 let bicikeljRunning = false;
 let lppRunning = false;
@@ -231,12 +255,12 @@ getBtn.addEventListener('click', getShape1);
 getBtn.addEventListener('click', getShape2);
 getBtnBicikelj.addEventListener('click', getBikes);
 getBtnLpp.addEventListener('click', setBusData)
-
 getBtnAdd.addEventListener('click', cur_bus);
 getBtnAdd.addEventListener('click', getDataAdd);
 getBtnAdd.addEventListener('click', getShape1);
 getBtnAdd.addEventListener('click', getShape2);
-//getBtnAdd.addEventListener('click', addButton());
+getBtnSosed.addEventListener('click', nearPostaje);
+
 
 async function markerOnClick(e)
 {
