@@ -49,6 +49,7 @@ function busRTExample()
 const getBtn = document.getElementById('getBtn');
 const getBtnAdd = document.getElementById('getBtnAdd');
 const getBtnSosed = document.getElementById('getBtnSosed');
+var routes = [];
 
 let dataMissing=true;
 let schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
@@ -112,8 +113,7 @@ const getShape1 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
         { 
             latlngs.push([data.results[0].trips[0].shape[i].lat, data.results[0].trips[0].shape[i].lng]);
         }
-        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6,weight: 10, smoothFactor: 1}).addTo(layerGroup);
-        polyline.bindPopup("Avtobus: "+bus);
+        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6,weight: 10, smoothFactor: 1}).bindPopup("Linija: "+bus).addTo(layerGroup);
         map.fitBounds(polyline.getBounds());
     } )
 .catch(e => console.log(e))
@@ -128,10 +128,10 @@ const getShape2 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
         { 
             latlngs.push([data.results[0].trips[1].shape[i].lat, data.results[0].trips[1].shape[i].lng]);
         }
-        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6, weight: 10, smoothFactor: 1}).addTo(layerGroup);
-        const xt3 = bus;
-        polyline.bindPopup("Avtobus: "+xt3);
+        var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6, weight: 10, smoothFactor: 1}).bindPopup("Linija: "+bus).addTo(layerGroup);   
         map.fitBounds(polyline.getBounds());
+        sleep(1000)
+
     } )
 .catch(e => console.log(e))
 
@@ -241,7 +241,7 @@ function success(pos)
 
 const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min="+lat_min+"&lat_max="+lat_max+"&lng_min="+lng_min+"&lng_max="+lng_max)
 .then(response => response.json())
-.then(data =>
+.then(data => 
     {   
         for(postaja in data.results)
         {
@@ -256,7 +256,6 @@ const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min
         for (let item of activeBuses.values())
             {
                 bus=item;
-                console.log(bus)
                 getShape1();
                 getShape2();
             } 
