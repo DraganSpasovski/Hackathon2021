@@ -2,25 +2,30 @@
 <html>
         <head>
 
-
             <div class="sidenav">
                 <button class="dropdown-btn" id="btnLPP">LPP 
                   <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="dropdown-container">
-                  <a id="text"> Vpiši število avtobusa</a>
-                  <input type="search" value="" id="bus">
-                  <button type="button" class="button" id="getBtn">
-                    <span class="button__text">GET Data</span>
+                  <a id="text"> Vnesi avtobusno linijo</a>
+                  <div class="searchPButton">
+                        <input type="search" class="search" value="" id="bus">
+                        <button type="button" class="button" id="getBtn">
+                          <span class="button__text">Izris poti</span>
+                        </button>
+                        <button type="button" class="button" id="getBtnAdd">
+                            <span class="button__text">Dodaj pot</span>
+                        </button>
+                        <button type="button" class="button" id="getBtnSosed">
+                          <span class="button__text">Sosednje postaje</span>
+                      </button>
                   </button>
-                  <button type="button" class="button" id="getBtnAdd">
-                    <span class="button__text">Add Route</span>
-                  </button>
+                  </div>
                 </div>
                 <button class="dropdown-btn" id="btnBicikeLJ">BicikeLJ
                     <i class="fa fa-caret-down"></i>
                 </button>
-              </div>
+            </div>
               
               <div class="main">
                 <httpProtocol>

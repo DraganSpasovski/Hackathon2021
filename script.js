@@ -1,12 +1,14 @@
 var southWest = L.latLng(46.2554,14.0295),
     northEast = L.latLng(45.8350,15.1076),
     bounds = L.latLngBounds(northEast,southWest);
+
 var map = L.map('map',{
     maxZoom: 18,
     minZoom: 12,
 }).setView([46.04980, 14.49764], 13);
+
 var osm = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery Â© <a href="https://www.mapbox.com/">Mapbox</a>',
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
@@ -16,6 +18,7 @@ map.setMaxBounds(bounds);
 
 var layerGroup = L.layerGroup().addTo(map);
 var layerGroupBikes = L.layerGroup().addTo(map);
+
 /**
  * Side navigation
  */
@@ -24,14 +27,17 @@ var dropdown = document.getElementsByClassName("dropdown-btn");
 var i;
 
 for (i = 0; i < dropdown.length; i++) {
+
   dropdown[i].addEventListener("click", function() {
   this.classList.toggle("active");
   var dropdownContent = this.nextElementSibling;
-  if (dropdownContent.style.display === "block") {
-  dropdownContent.style.display = "none";
-  } else {
-  dropdownContent.style.display = "block";
-  }
-  });
+  try {
+    if (dropdownContent.style.display === "block") { 
+        dropdownContent.style.display = "none";
+    } else {
+      dropdownContent.style.display = "block";
+    }
+  } catch (e) {
+      console.log(e);
+  }});
 }
-

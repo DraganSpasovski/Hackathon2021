@@ -1,14 +1,25 @@
 let busEx;
 const getBtnBicikelj = document.getElementById('btnBicikeLJ');
+const getBtnLpp = document.getElementById('btnLPP');
+var dropdown = document.getElementsByClassName("dropdown-btn");
+// trenutno se neuporabno
+//busRTExample()
 
-let busInfo = new L.circle([46.051318465073795, 14.479674887201202],
-     {radius: 20, color: "black", fillOpacity: 0.8}).addTo(map);
+let busInfo = new L.circle([46.051318465073795, 14.479674887201202], {radius: 20, color: "black", fillOpacity: 0.8}).addTo(map);
+// TODO: implement avtobus info
 busInfo.bindPopup("<b>registracija:</b> LJ-LPP-439" +
                "<br><b>pot:</b> KOLODVOR" + 
                "<br><b>Kapaciteta:</b> 80" +
                "<br><b>Zasedenost:</b> 32" +
                "<br><b>Hitrost:</b> 53");
-               
+               /* if its possible to display this data, then uncomment
+               "<br><br><b>Lokacija:</b> ZOO" +
+               "<br><b>Naslednja postaja:</b> Večna pot" +
+               "<br><b>Prihod do naslednje postaje:</b> 2 minuti");*/
+// spreminjanje lokacije
+//busInfo.setLatLng([46.056129458185, 14.472137335197804]);
+
+
 function sleep(ms)
 {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -26,9 +37,10 @@ function busRTExample()
 
                 for(let i = 0; i < data_len; i++)
                 {
-                 
-                        busEx._latlng.lat = data.results[0].trips[0].shape[i].lat;
-                        busEx._latlng.lng = data.results[0].trips[0].shape[i].lng;
+                    // TODO: implement sleep
+                    // moralo bi premikati avtobus, vendar sleep ne dela
+                    busEx._latlng.lat = data.results[0].trips[0].shape[i].lat;
+                    busEx._latlng.lng = data.results[0].trips[0].shape[i].lng;
                 }
             } )
         .catch(e => console.log(e))
@@ -37,11 +49,14 @@ function busRTExample()
 const getBtn = document.getElementById('getBtn');
 const getBtnAdd = document.getElementById('getBtnAdd');
 
+let dataMissing=true;
 let schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
 var bus;
+let activeBuses= new Set();
 function cur_bus()
 {
     bus = document.getElementById('bus').value;
+    activeBuses.add(bus);
 }
 let markerList = [];
 let stationID = 0;
@@ -50,9 +65,11 @@ const getData = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?page_size=1
 .then(data =>
     {
     
-        layerGroup.clearLayers()
+        layerGroup.clearLayers();
+        activeBuses.clear();
+        activeBuses.add(bus);
         
-        layerGroupBikes.clearLayers();
+        //layerGroupBikes.clearLayers();
         for (result in data.results)
         { 
             if (data.results[result].route_groups.includes(bus))
@@ -121,7 +138,7 @@ const getSchedule = () => fetch("https://api.ontime.si/api/v1/lpp/stops/"+statio
             let allArrivalTimes = [];
             let routes = [];
             for(timetable in data.timetable){
-                if(data.timetable[timetable].group==bus){
+                if(activeBuses.has(data.timetable[timetable].group)){
                     routes.push(data.timetable[timetable].name);
                     let arrivalTimes=[];
                     for(arrival in data.timetable[timetable].arrivals){
@@ -137,6 +154,9 @@ const getSchedule = () => fetch("https://api.ontime.si/api/v1/lpp/stops/"+statio
                     }
                     allArrivalTimes.push(arrivalTimes);
                 };
+            }    
+            if(routes.length!=0&&allArrivalTimes.length!=0){
+                dataMissing=false;
             }
             schedule = "<b>PRIHODI AVTOBUSOV</b><br><br>";
             for(index in routes){
@@ -154,52 +174,84 @@ const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/")
 .then(response => response.json())
 .then(data =>
     {
-        layerGroup.clearLayers();
-        layerGroupBikes.clearLayers();
-        for(bikeLoc in data.results)
+        
+        // clear map if not clicked in
+        if(!bicikeljRunning)
         {
+            bicikeljRunning = true;
             
-            if(data.results[bikeLoc].total_stands * 0.8 <= data.results[bikeLoc].available_bikes)
+            for(bikeLoc in data.results)
             {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'green'}).bindPopup(
-                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
+                //console.log(data.results[bikeLoc].total_stands * 0.8)
+                if(data.results[bikeLoc].total_stands * 0.8 <= data.results[bikeLoc].available_bikes)
+                {
+                    const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'green'}).bindPopup(
+                        "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
+                }
+                else if(data.results[bikeLoc].available_bikes <= data.results[bikeLoc].total_stands * 0.2)
+                {
+                    const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'red'}).bindPopup(
+                        "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
+                }
+                else
+                {
+                    const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'orange'})
+                    .bindPopup(
+                        "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
+                }
             }
-            else if(data.results[bikeLoc].available_bikes <= data.results[bikeLoc].total_stands * 0.2)
-            {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'red'}).bindPopup(
-                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
-            }
-            else
-            {
-                const c = L.circle([data.results[bikeLoc].lat,data.results[bikeLoc].lng],{radius: 20,color: 'orange'})
-                .bindPopup(
-                    "Število prostih koles: "+ data.results[bikeLoc].available_bikes+"<br>Število prostih mest: "+data.results[bikeLoc].available_stands).addTo(layerGroupBikes)
-            }
+        } else {
+            bicikeljRunning = false;
+            layerGroupBikes.clearLayers();
         }
     }
 )
+
+
+// clear map when not clicked in
+function setBusData()
+{
+    if(!lppRunning){
+        lppRunning = true;
+    } else {
+        lppRunning = false;
+        layerGroup.clearLayers();
+        activeBuses.clear();
+    }
+}
+
+
+
+let bicikeljRunning = false;
+let lppRunning = false;
 
 getBtn.addEventListener('click', cur_bus);
 getBtn.addEventListener('click', getData);
 getBtn.addEventListener('click', getShape1);
 getBtn.addEventListener('click', getShape2);
+getBtnBicikelj.addEventListener('click', getBikes);
+getBtnLpp.addEventListener('click', setBusData)
+
 getBtnAdd.addEventListener('click', cur_bus);
 getBtnAdd.addEventListener('click', getDataAdd);
 getBtnAdd.addEventListener('click', getShape1);
 getBtnAdd.addEventListener('click', getShape2);
-///getBtnAdd.addEventListener('click', addButton());
-getBtnBicikelj.addEventListener('click', getBikes);
+//getBtnAdd.addEventListener('click', addButton());
 
 async function markerOnClick(e)
 {
     stationID=e.target._tooltip._content.split("_")[0];
     getSchedule();
-    console.log();
-    if(schedule == "<b>PRIHODI AVTOBUSOV</b><br><br>")
-    {
+    while(schedule=="<b>PRIHODI AVTOBUSOV</b><br><br>"){
+        console.log("waiting data");
         await sleep(100);
-        getSchedule();
     }
-    e.target.bindPopup(schedule);
-    schedule = "<b>PRIHODI AVTOBUSOV</b><br><br>"
+    if(dataMissing){
+        alert("Podatki za postajo trenutno manjkajo. Poskustie znova.");
+        return;
+    }
+    e.target.bindPopup(schedule).openPopup();
+    e.target.unbindPopup();
+    schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
+    dataMissing=true;
 }
