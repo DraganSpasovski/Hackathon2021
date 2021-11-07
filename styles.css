@@ -91,9 +91,9 @@
     flex-wrap: wrap;
 }
 
-************************/
-  CSS for navigation  */
-**********************/
+/*************************/
+/*  CSS for navigation  */
+/***********************/
 dy {
   font-family: sans-serif;
 }
@@ -108,7 +108,6 @@ dy {
   left: 0;
   background-color: #111;
   overflow-x: hidden;
-  padding-top: 20px;
 }
 
 /* Style the sidenav links and the dropdown button */
@@ -125,7 +124,9 @@ dy {
   cursor: pointer;
   outline: none;
   align-items: center;
+  margin-top: 20px;
 }
+
 
 /* Main content */
 .main {
@@ -148,6 +149,10 @@ dy {
 .dropdown-container {
   display: none;
   height: 260px;
+  background-color: #262626;
+}
+
+.dropdown-btn:hover {
   background-color: #262626;
 }
 
