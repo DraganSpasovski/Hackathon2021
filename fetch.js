@@ -113,6 +113,7 @@ const getShape1 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
             latlngs.push([data.results[0].trips[0].shape[i].lat, data.results[0].trips[0].shape[i].lng]);
         }
         var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6,weight: 10, smoothFactor: 1}).addTo(layerGroup);
+        polyline.bindPopup("Avtobus: "+bus);
         map.fitBounds(polyline.getBounds());
     } )
 .catch(e => console.log(e))
@@ -128,6 +129,8 @@ const getShape2 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
             latlngs.push([data.results[0].trips[1].shape[i].lat, data.results[0].trips[1].shape[i].lng]);
         }
         var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6, weight: 10, smoothFactor: 1}).addTo(layerGroup);
+        const xt3 = bus;
+        polyline.bindPopup("Avtobus: "+xt3);
         map.fitBounds(polyline.getBounds());
     } )
 .catch(e => console.log(e))
@@ -232,8 +235,8 @@ function success(pos)
     lat_min = pos.coords.latitude - 0.006
     lng_max = pos.coords.longitude + 0.006
     lng_min = pos.coords.longitude - 0.006
-    let m = new L.marker([pos.coords.latitude,pos.coords.longitude],{color: 'red'}).bindPopup("Tvoja Lokacija").openPopup()
-    m.addTo(map);
+    L.marker([pos.coords.latitude,pos.coords.longitude],{color: 'red'}).bindPopup("Tvoja Lokacija").openPopup().addTo(map);
+    
 }
 
 const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min="+lat_min+"&lat_max="+lat_max+"&lng_min="+lng_min+"&lng_max="+lng_max)
@@ -242,8 +245,21 @@ const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min
     {   
         for(postaja in data.results)
         {
+            for(buskee in data.results[postaja].route_groups)
+            {
+                activeBuses.add(data.results[postaja].route_groups[buskee])
+            }
+            
             L.marker([data.results[postaja].lat,data.results[postaja].lng]).addTo(layerGroup);
-    }
+
+        }
+        for (let item of activeBuses.values())
+            {
+                bus=item;
+                console.log(bus)
+                getShape1();
+                getShape2();
+            } 
     })
 
 let bicikeljRunning = false;
