@@ -7,9 +7,11 @@
                   <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="dropdown-container">
-                  <a id="text"> Vnesi avtobusno linijo</a>
                   <div class="searchPButton">
-                        <input type="search" class="search" value="" id="bus">
+                    <div class="form__group field">
+                      <input type="input" class="form__field" placeholder="Izberi linijo" name="name" id='bus' autocomplete="off" required />
+                      <!--<label for="name" class="form__label">Vnesi avtobusno postajo</label>-->
+                    </div>
                         <button type="button" class="button" id="getBtn">
                           <span class="button__text">Izris poti</span>
                         </button>
