@@ -144,7 +144,7 @@ const getShape2 = () => fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?gr
         }
         var polyline = L.polyline(latlngs, {color: "#" + ((1<<24)*Math.random() | 0).toString(16), opacity: 0.6, weight: 10, smoothFactor: 1}).bindPopup("Linija: "+bus).addTo(layerGroup);   
         map.fitBounds(polyline.getBounds());
-        sleep(1000)
+    
 
     } )
 .catch(e => console.log(e))
@@ -242,20 +242,22 @@ let lat_max;
 let lat_min;
 let lng_max;
 let lng_min;
+
 navigator.geolocation.getCurrentPosition(success,console.log)
+
 function success(pos)
 {
-    lat_max = pos.coords.latitude + 0.006
-    lat_min = pos.coords.latitude - 0.006
-    lng_max = pos.coords.longitude + 0.006
-    lng_min = pos.coords.longitude - 0.006
-    L.marker([pos.coords.latitude,pos.coords.longitude],{color: 'red'}).bindPopup("Tvoja Lokacija").openPopup().addTo(map);
-    
+    lat_max = pos.coords.latitude + 0.0067
+    lat_min = pos.coords.latitude - 0.0067
+    lng_max = pos.coords.longitude + 0.0067
+    lng_min = pos.coords.longitude - 0.0067
+    L.marker([pos.coords.latitude,pos.coords.longitude]).bindPopup("Tvoja Lokacija").openPopup().addTo(map);
+   
 }
 
-const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min="+lat_min+"&lat_max="+lat_max+"&lng_min="+lng_min+"&lng_max="+lng_max)
+const nearPostaje = async () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min="+lat_min+"&lat_max="+lat_max+"&lng_min="+lng_min+"&lng_max="+lng_max)
 .then(response => response.json())
-.then(data => 
+.then(async data => 
     {   
         for(postaja in data.results)
         {
@@ -269,9 +271,10 @@ const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min
         }
         for (let item of activeBuses.values())
             {
+                await sleep(700)
                 bus=item;
-                getShape1();
-                getShape2();
+                getShape1()
+                getShape2()
             } 
     })
 
