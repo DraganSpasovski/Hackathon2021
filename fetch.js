@@ -25,6 +25,20 @@ function sleep(ms)
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+var leafIcon = L.Icon.extend({
+    options:{
+        iconSize:     [22,33], // size of the icon
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    }
+});
+
+var greenIcon = new leafIcon({
+    iconUrl: 'Untitled-1.svg'
+});
+var greenIcon2 = new leafIcon({
+    iconUrl: 'Untitled-2.svg'
+});
+
 function busRTExample()
 {
     busEx = new L.circle([46.052129458185, 14.472137335197804], {radius: 20}).addTo(map);
@@ -76,7 +90,7 @@ const getData = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?page_size=1
         { 
             if (data.results[result].route_groups.includes(bus))
             {   
-                let marker = new L.marker([data.results[result].lat,data.results[result].lng]).on('click', markerOnClick).addTo(layerGroup)
+                let marker = new L.marker([data.results[result].lat,data.results[result].lng],{icon: greenIcon2}).on('click', markerOnClick).addTo(layerGroup)
                 marker.bindTooltip(data.results[result].stop_id + "_" + data.results[result].name);
                 markerList.push(marker);
             }
@@ -92,7 +106,7 @@ const getDataAdd = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?page_siz
         { 
             if (data.results[result].route_groups.includes(bus))
             {   
-                let marker = new L.marker([data.results[result].lat,data.results[result].lng]).on('click', markerOnClick).addTo(layerGroup)
+                let marker = new L.marker([data.results[result].lat,data.results[result].lng],{icon: greenIcon2}).on('click', markerOnClick).addTo(layerGroup)
                 marker.bindTooltip(data.results[result].stop_id + "_" + data.results[result].name);
                 markerList.push(marker);
             }
@@ -250,7 +264,7 @@ const nearPostaje = () => fetch("https://api.ontime.si/api/v1/lpp/stops/?lat_min
                 activeBuses.add(data.results[postaja].route_groups[buskee])
             }
             
-            L.marker([data.results[postaja].lat,data.results[postaja].lng]).addTo(layerGroup);
+            L.marker([data.results[postaja].lat,data.results[postaja].lng],{icon: greenIcon}).addTo(layerGroup);
 
         }
         for (let item of activeBuses.values())
