@@ -1,9 +1,8 @@
-let busEx;
 const getBtnBicikelj = document.getElementById('btnBicikeLJ');
 const getBtnLpp = document.getElementById('btnLPP');
 var dropdown = document.getElementsByClassName("dropdown-btn");
-// trenutno se neuporabno
-//busRTExample()
+
+busRTExample()
 
 let busInfo = new L.circle([46.051318465073795, 14.479674887201202], {radius: 20, color: "black", fillOpacity: 0.8}).addTo(map);
 // TODO: implement avtobus info
@@ -39,25 +38,42 @@ var greenIcon2 = new leafIcon({
     iconUrl: 'Untitled-2.svg'
 });
 
-function busRTExample()
+async function busRTExampleDraw(busshape)
 {
-    busEx = new L.circle([46.052129458185, 14.472137335197804], {radius: 20}).addTo(map);
-    
-    fetch("https://api.ontime.si/api/v1/lpp/route-shapes/?groups=18")
-        .then(response => response.json())
-        .then(data =>
-            {
-                let data_len = data.results[0].trips[0].shape.length;
+    while(true)
+    {
+        for(let i = 1; i < busshape.length; i++)
+        {
+            let busEx = new L.circle([busshape[i].lat, busshape[i].lng], {radius: 50}).addTo(map);
+            await sleep(500);
+            map.removeLayer(busEx);
+        }
+        for(let i = busshape.length-1; i > 0; i--)
+        {
+            let busEx = new L.circle([busshape[i].lat, busshape[i].lng], {radius: 50}).addTo(map);
+            await sleep(500);
+            map.removeLayer(busEx);
+        }
+    }
+}
 
-                for(let i = 0; i < data_len; i++)
-                {
-                    // TODO: implement sleep
-                    // moralo bi premikati avtobus, vendar sleep ne dela
-                    busEx._latlng.lat = data.results[0].trips[0].shape[i].lat;
-                    busEx._latlng.lng = data.results[0].trips[0].shape[i].lng;
-                }
-            } )
-        .catch(e => console.log(e))
+async function busRTExampleFetch(busNo)
+{
+    // if "let" instead of "var", there is an error..?
+    var buspot = await fetch('https://api.ontime.si/api/v1/lpp/route-shapes/?groups=' +  busNo)
+                        .then(res => res.json())
+                        .then(data => buspot = data)
+
+    busRTExampleDraw(buspot.results[0].trips[0].shape);
+}
+
+async function busRTExample()
+{
+    busRTExampleFetch(18);
+    busRTExampleFetch(14);
+    busRTExampleFetch(6);
+    busRTExampleFetch(27);
+    busRTExampleFetch(9);
 }
 
 const getBtn = document.getElementById('getBtn');
@@ -311,3 +327,31 @@ async function markerOnClick(e)
     schedule="<b>PRIHODI AVTOBUSOV</b><br><br>";
     dataMissing=true;
 }
+
+
+let asdda = 0;
+
+// real time bus
+/*
+callRealTime();
+
+async function callRealTime()
+{
+    while(true)
+    {
+        updateBusLocation(); 
+        await sleep(1000);
+    }
+}
+
+function updateBusLocation()
+{
+    fetch("https://data.lpp.si/api/bus/bus-details")
+        .then(response => response.json())
+        .then(async data => 
+        {
+            console.log(data);
+        })
+        .catch(e => console.log("updateBusLocation: " + e))
+}
+*/
