@@ -254,8 +254,7 @@ function testFetch()
           console.log(xhr.status);
           console.log(xhr.responseText);
        }};
-    
-    xhr.send();    
+    console.log(xhr);
 }
 
 
