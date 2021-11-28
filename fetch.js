@@ -188,19 +188,7 @@ const getSchedule = () => fetch("https://api.ontime.si/api/v1/lpp/stops/"+statio
     .catch(e => console.log(e))
 
 
-const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/", {
-   method: 'GET',
-   mode: 'cors',
-   credentials: 'include',
-   headers:
-   { 
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
-        'Access-Control-Allow-Credentials': true,
-        'Content-Type': 'application/json'
-    },
-})
+const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/")
 .then(response => response.json())
 .then(data =>
     {
@@ -237,26 +225,6 @@ const getBikes = () => fetch("https://api.ontime.si/api/v1/bicikelj/", {
     }
 )
 .catch(e => console.log(e))
-
-
-function testFetch()
-{
-    var url = "https://api.ontime.si/api/v1/bicikelj/";
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    
-    xhr.setRequestHeader("accept", "application/json");
-    xhr.setRequestHeader("X-CSRFToken", "2PWPtzM88RsyFx3JlWyNElgRNGSWD9ETbMOJip5fKv5Prp40F1EOVQXvCsun9YmN");
-    
-    xhr.onreadystatechange = function () {
-       if (xhr.readyState === 4) {
-          console.log(xhr.status);
-          console.log(xhr.responseText);
-       }};
-    console.log(xhr);
-}
-
 
 // clear map when not clicked in
 function setBusData()
@@ -317,11 +285,7 @@ getBtn.addEventListener('click', cur_bus);
 getBtn.addEventListener('click', getData);
 getBtn.addEventListener('click', getShape1);
 getBtn.addEventListener('click', getShape2);
-
 getBtnBicikelj.addEventListener('click', getBikes);
-getBtnBicikelj.addEventListener('click', testFetch);
-
-
 getBtnLpp.addEventListener('click', setBusData)
 getBtnAdd.addEventListener('click', cur_bus);
 getBtnAdd.addEventListener('click', getDataAdd);
